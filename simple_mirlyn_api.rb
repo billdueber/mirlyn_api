@@ -1,19 +1,19 @@
 require 'sinatra/base'
-require 'sinatra/config_file'
+#require 'sinatra/config_file'
 require 'sinatra/json'
 require 'json'
 require 'mirlyn_id_api'
 
 class SimpleMirlynAPI < Sinatra::Base
 
-  register Sinatra::ConfigFile
+#  register Sinatra::ConfigFile
 
-  config_file File.join(File.dirname(__FILE__), 'config.yml')
+#  config_file File.join(File.dirname(__FILE__), 'config.yml')
   enable :logging
   enable :prefixed_redirects
 
   configure do
-    set :client, MirlynIdApi::SolrClient.new("http://mojito.umdl.umich.edu:8026/solr/biblio")
+    set :client, MirlynIdApi::SolrClient.new("http://solr-vufind:8026/solr/biblio")
   end
 
   get '/' do
