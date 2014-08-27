@@ -3,7 +3,8 @@ source 'http://gems.www.lib.umich.edu'
 
 gem 'sinatra'
 gem 'sinatra-contrib'
+gem 'sinatra-jsonp'
 gem 'mirlyn_id_api'
 gem 'json'
-
+gem 'library_stdnums'
 
