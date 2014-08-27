@@ -22,7 +22,7 @@ class SimpleMirlynAPI < Sinatra::Base
   helpers do
     def malformed!(type, val)
       status 400
-      jsonp({'status' => status, 'error' => "#{val} cannot be interpreted as an #{type}"})
+      jsonp({'status' => status, 'error' => "'#{val}' cannot be interpreted as an #{type}"})
     end
 
     def kv_search(key, val)
@@ -95,7 +95,7 @@ class SimpleMirlynAPI < Sinatra::Base
   # Catch all
   get '/:key/:val' do
     status 405
-    jsonp({'status' => status, 'error' => "Search key #{params[:key]} is not supported"})
+    jsonp({'status' => status, 'error' => "Search key '#{params[:key]}' is not supported"})
   end
 
 
