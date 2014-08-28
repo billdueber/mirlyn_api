@@ -1,4 +1,7 @@
-require './simple_mirlyn_api'
+$:.unshift 'lib'
+
+require 'simple_mirlyn_api'
+require 'old_api_redirect'
 
 
 map '/simple/v1' do
