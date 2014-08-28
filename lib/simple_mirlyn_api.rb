@@ -42,7 +42,8 @@ class SimpleMirlynAPI < Sinatra::Base
           'issn' => "ISSN",
           'oclc' => 'OCLC Number',
           'isbn' => "ISBN",
-          'lccn' => "Library of Congress Call Number"
+          'lccn' => "Library of Congress Call Number",
+          'htid' => "HathiTrust ID"
          }})
   end
 
@@ -87,6 +88,10 @@ class SimpleMirlynAPI < Sinatra::Base
     kv_search('oclc',n)
   end
 
+  get '/htid/:val' do |htid|
+    kv_search('htid', htid)
+  end
+  
   # Catch all
   get '/:key/:val' do
     status 405
