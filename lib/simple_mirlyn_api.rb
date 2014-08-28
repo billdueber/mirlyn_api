@@ -89,9 +89,9 @@ class SimpleMirlynAPI < Sinatra::Base
   end
 
   get '/htid/:val' do |htid|
-    kv_search('htid', htid)
+    kv_search('ht_id', htid)
   end
-  
+
   # Catch all
   get '/:key/:val' do
     status 405
