@@ -58,7 +58,7 @@ class SimpleMirlynAPI < Sinatra::Base
 
   get '/issn/:val' do
     val = params[:val]
-    unless StdNum::ISSN.at_least_trying?(val)
+    unless StdNum::ISSN.reduce_to_basics(val, 8)
       malformed!('issn',val)
     else
       kv_search('issn', val)
