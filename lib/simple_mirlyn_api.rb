@@ -6,7 +6,6 @@ require 'mirlyn_id_api'
 
 class SimpleMirlynAPI < Sinatra::Base
 
-  register Sinatra::ConfigFile
   helpers Sinatra::Jsonp
 
   enable :logging
