@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require 'sinatra/config_file'
 require 'sinatra/jsonp'
 require 'json'
 require 'mirlyn_id_api'
@@ -10,13 +9,10 @@ class SimpleMirlynAPI < Sinatra::Base
   register Sinatra::ConfigFile
   helpers Sinatra::Jsonp
 
-  config_file File.join(File.dirname(__FILE__), 'config.yml')
   enable :logging
   enable :prefixed_redirects
-
-  configure do
-    set :client, MirlynIdApi::SolrClient.new(settings.solrurl)
-  end
+  set :client, MirlynIdApi::SolrClient.new(ENV['MIRLYN_SOLR_URL'])
+  set :root, ENV['MIRLYN_API_APPLICATION_ROOT']
 
 
   helpers do
