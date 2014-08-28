@@ -9,7 +9,7 @@ class OldAPIRedirect < Sinatra::Base
 
   get '/:full_brief/:key/*.json' do |brev, key, id|
     status 303
-    redirect "http://mirlyn.lib.umich.edu/static/api/volumes.php?q=#{key}:#{id}&type=json&single=1&breviey=#{brev}"
+    redirect "http://mirlyn.lib.umich.edu/static/api/volumes.php?q=#{key}:#{id}&type=json&single=1&brevity=#{brev}"
   end
 
 
