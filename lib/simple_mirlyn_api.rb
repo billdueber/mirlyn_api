@@ -17,7 +17,7 @@ class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
   end
 
   def main_author
-    @doc['mainauthor'] || doc['author'].first
+    @doc['mainauthor'] || @doc['author'].first
   end
 
   def other_authors
