@@ -20,8 +20,8 @@ class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
     @doc['mainauthor'] || doc['author'].first
   end
 
-  def authors
-    [@doc['author'], @doc['author2']].flatten.compact.uniq
+  def other_authors
+    [@doc['author'], @doc['author2']].flatten.compact.uniq - main_author
   end
 
   def languages
@@ -54,11 +54,12 @@ class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
         'title' => title,
         'languages' => languages,
         'main_author' => main_author,
-        'authors' => authors,
+        'other_authors' => other_authors,
         'formats' => formats,
+        'pages' => pages,
         'publication_date' => publication_date,
         'print_holdings' => print_holdings.map(&:to_h),
-        'electronic_holdings' => (electronic_holdings + ht_holdings).compact.map(&:to_h)
+        'electronic_holdings' => e_holdings.map(&:to_h)
     }
 
     h['oclc'] = oclc if oclc
@@ -97,7 +98,9 @@ class SimpleMirlynAPI < Sinatra::Base
         rv['status'] = 404
         jsonp rv
       else
-        jsonp resp.to_h.merge({'status' => 200})
+        rv = resp
+        rv.docs.map! {|x| MirlynDocumentPresenter.new(x)}
+        jsonp rv.to_h.merge({'status' => 200})
       end
     end
   end
