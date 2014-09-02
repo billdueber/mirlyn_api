@@ -17,23 +17,19 @@ class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
   end
 
   def main_author
-    ma = @doc['mainauthor']
-    unless ma
-      ma = @doc['author'] ? @doc['author'].first : nil
-    end
-    ma
+    [@doc['mainauthor'], @doc['author']].flatten.first
   end
 
   def other_authors
-    [@doc['author'], @doc['author2']].flatten.compact.uniq.delete(main_author)
+    [@doc['author'], @doc['author2']].flatten.compact.uniq - [main_author]
   end
 
   def languages
-    @doc['language']
+    Array(@doc['language']).uniq
   end
 
   def formats
-    @doc['format']
+    Array(@doc['format']).uniq
   end
 
   def publication_date
