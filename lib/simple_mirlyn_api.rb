@@ -4,6 +4,75 @@ require 'json'
 require 'mirlyn_id_api'
 
 
+class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
+  def initialize(mdoc)
+    @doc = mdoc.solr_doc_hash
+  end
+
+  # We get title, the identifiers, *holdings, and catalog_url for free
+  # from the superclass
+
+  def record_id
+    @doc['id']
+  end
+
+  def main_author
+    @doc['mainauthor'] || doc['author'].first
+  end
+
+  def authors
+    [@doc['author'], @doc['author2']].flatten.compact.uniq
+  end
+
+  def languages
+    @doc['language']
+  end
+
+  def formats
+    @doc['format']
+  end
+
+  def publication_date
+    @doc['publishDate'].first
+  end
+
+  def pages
+    candidate = marc['300'] && marc['300']['a']
+    m = /(\d+)\s*p/.match(candidate)
+    m ? m[1] : candidate
+  end
+
+  def e_holdings
+    [electronic_holdings, ht_holdings].flatten.compact.uniq
+  end
+
+
+  def to_h
+    h = {
+        'id' => record_id,
+        'catalog_url' => catalog_url,
+        'title' => title,
+        'languages' => languages,
+        'main_author' => main_author,
+        'authors' => authors,
+        'formats' => formats,
+        'publication_date' => publication_date,
+        'print_holdings' => print_holdings.map(&:to_h),
+        'electronic_holdings' => (electronic_holdings + ht_holdings).compact.map(&:to_h)
+    }
+
+    h['oclc'] = oclc if oclc
+    h['isbn'] = isbn if isbn
+    h['issn'] = issn if issn
+    h['lccn'] = lccn if lccn
+
+    h
+
+  end
+
+
+end
+
 class SimpleMirlynAPI < Sinatra::Base
 
   helpers Sinatra::Jsonp
@@ -31,8 +100,6 @@ class SimpleMirlynAPI < Sinatra::Base
         jsonp resp.to_h.merge({'status' => 200})
       end
     end
-
-
   end
 
 
