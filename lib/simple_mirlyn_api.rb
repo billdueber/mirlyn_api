@@ -21,7 +21,7 @@ class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
   end
 
   def other_authors
-    [@doc['author'], @doc['author2']].flatten.compact.uniq - main_author
+    [@doc['author'], @doc['author2']].flatten.compact.uniq.delete(main_author)
   end
 
   def languages
