@@ -2,7 +2,7 @@ require 'sinatra/base'
 require 'sinatra/jsonp'
 require 'json'
 require 'mirlyn_id_api'
-
+require 'socket'
 
 class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
   def initialize(mdoc)
@@ -101,7 +101,12 @@ class SimpleMirlynAPI < Sinatra::Base
       else
         rv = resp
         rv.docs.map! {|x| MirlynDocumentPresenter.new(x)}
-        jsonp rv.to_h.merge({'status' => 200})
+        
+        rv = rv.to_h.merge({'status' => 200})
+
+        rv['hostname'] = Socket.gethostname
+
+        jsonp rv
       end
     end
   end
