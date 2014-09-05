@@ -85,6 +85,10 @@ class SimpleMirlynAPI < Sinatra::Base
   set :default_encoding, 'utf-8'
 
 
+  # Make sure json is sent with the charset (utf-8)
+  settings.add_charset << 'application/json'
+
+
   helpers do
     def malformed!(type, val)
       status 400
