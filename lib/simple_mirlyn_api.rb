@@ -82,6 +82,7 @@ class SimpleMirlynAPI < Sinatra::Base
   enable :prefixed_redirects
   set :client, MirlynIdApi::SolrClient.new(ENV['MIRLYN_SOLR_URL'])
   set :root, ENV['MIRLYN_API_APPLICATION_ROOT']
+  set :default_encoding, 'utf-8'
 
 
   helpers do
