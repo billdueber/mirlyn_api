@@ -2,7 +2,7 @@ require 'sinatra/base'
 require 'sinatra/jsonp'
 require 'json'
 require 'mirlyn_id_api'
-
+require 'socket'
 
 class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
   def initialize(mdoc)
@@ -82,6 +82,11 @@ class SimpleMirlynAPI < Sinatra::Base
   enable :prefixed_redirects
   set :client, MirlynIdApi::SolrClient.new(ENV['MIRLYN_SOLR_URL'])
   set :root, ENV['MIRLYN_API_APPLICATION_ROOT']
+  set :default_encoding, 'utf-8'
+
+
+  # Make sure json is sent with the charset (utf-8)
+  settings.add_charset << 'application/json'
 
 
   helpers do
@@ -100,7 +105,12 @@ class SimpleMirlynAPI < Sinatra::Base
       else
         rv = resp
         rv.docs.map! {|x| MirlynDocumentPresenter.new(x)}
-        jsonp rv.to_h.merge({'status' => 200})
+        
+        rv = rv.to_h.merge({'status' => 200})
+
+        rv['hostname'] = Socket.gethostname
+
+        jsonp rv
       end
     end
   end
