@@ -128,12 +128,14 @@ class SimpleMirlynAPI < Sinatra::Base
   end
 
 
+  # For ISBNs, search on the given value and the 10/13 forms
   get '/isbn/:val' do
     val = params[:val]
     unless StdNum::ISBN.at_least_trying?(val)
       malformed!('isbn',val)
     else
-      kv_search('isbn', val)
+      bestguess = StdNum::ISBN.reduce_to_basics(val, [10,13])
+      kv_search('isbn', '(' + [bestguess, StdNum::ISBN.allNormalizedValues(val)].flatten.compact.uniq.join(' OR ') + ')')
     end
   end
 
