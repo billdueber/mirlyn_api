@@ -33,7 +33,7 @@ class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
   end
 
   def publication_date
-    defined? @doc['publishDate'] ? @doc['publishDate'].first : nil
+    Array(@doc['publishDate']).first
   end
 
   def pages
