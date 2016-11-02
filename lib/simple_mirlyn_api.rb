@@ -3,6 +3,23 @@ require 'sinatra/jsonp'
 require 'json'
 require 'mirlyn_id_api'
 require 'socket'
+require 'yaml'
+
+# Ok, so I stupidly hooked the locColl.yaml into the MirlynIdApi gem,
+# because, you know, I'm stupid.
+
+# I should (and will) fix it For Reals, but in the meantime I'm going to
+# pull this out and just override the damn thing
+
+class MirlynIdApi::MirlynHolding
+
+  def location
+    colls = YAML.load_file('/www/vufind/web/mirlyn/web/conf/locColl.yaml')
+    (colls[sublib] and colls[sublib]['collections'][collection]) or
+     colls[sublib]['desc']
+  end
+end
+
 
 class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
   def initialize(mdoc)
