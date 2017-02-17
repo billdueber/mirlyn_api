@@ -8,3 +8,5 @@ gem 'mirlyn_id_api', '~> 1.0'
 gem 'json'
 gem 'library_stdnums'
 
+gem 'puma',group: :development
+gem 'pry',group: :development

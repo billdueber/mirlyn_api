@@ -16,7 +16,7 @@ class MirlynIdApi::MirlynHolding
   def location
     colls = YAML.load_file('/www/vufind/web/mirlyn/web/conf/locColl.yaml')
     (colls[sublib] and colls[sublib]['collections'][collection]) or
-     colls[sublib]['desc']
+        colls[sublib]['desc']
   end
 end
 
@@ -55,7 +55,7 @@ class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
 
   def pages
     candidate = marc['300'] && marc['300']['a']
-    m = /(\d+)\s*p/.match(candidate)
+    m         = /(\d+)\s*p/.match(candidate)
     m ? m[1] : candidate
   end
 
@@ -65,17 +65,17 @@ class MirlynDocumentPresenter < MirlynIdApi::MirlynSolrDocument
 
 
   def to_h
-    h = {
-        'id' => record_id,
-        'catalog_url' => catalog_url,
-        'title' => title,
-        'languages' => languages,
-        'main_author' => main_author,
-        'other_authors' => other_authors,
-        'formats' => formats,
-        'pages' => pages,
-        'publication_date' => publication_date,
-        'print_holdings' => print_holdings.map(&:to_h),
+    h         = {
+        'id'                  => record_id,
+        'catalog_url'         => catalog_url,
+        'title'               => title,
+        'languages'           => languages,
+        'main_author'         => main_author,
+        'other_authors'       => other_authors,
+        'formats'             => formats,
+        'pages'               => pages,
+        'publication_date'    => publication_date,
+        'print_holdings'      => print_holdings.map(&:to_h),
         'electronic_holdings' => e_holdings.map(&:to_h)
     }
 
@@ -97,7 +97,9 @@ class SimpleMirlynAPI < Sinatra::Base
 
   enable :logging
   enable :prefixed_redirects
-  set :client, MirlynIdApi::SolrClient.new(ENV['MIRLYN_SOLR_URL'])
+  set :mirlyn_solr_url, ENV['MIRLYN_SOLR_URL']
+  set :mirlyn_dev_solr_url, ENV['MIRLYN_DEV_SOLR_URL']
+  set :client, MirlynIdApi::SolrClient.new(settings.mirlyn_solr_url)
   set :root, ENV['MIRLYN_API_APPLICATION_ROOT']
   set :default_encoding, 'utf-8'
 
@@ -113,16 +115,21 @@ class SimpleMirlynAPI < Sinatra::Base
     end
 
     def kv_search(key, val)
-      resp = settings.client.kv_search(key, val)
+      if request.query_string =~ /dev/i
+        client = MirlynIdApi::SolrClient.new(settings.mirlyn_dev_solr_url)
+      else
+        client = settings.client
+      end
+      resp = client.kv_search(key, val)
       if resp.empty?
         status 404
-        rv = resp.to_h
+        rv           = resp.to_h
         rv['status'] = 404
         jsonp rv
       else
         rv = resp
-        rv.docs.map! {|x| MirlynDocumentPresenter.new(x)}
-        
+        rv.docs.map! { |x| MirlynDocumentPresenter.new(x) }
+
         rv = rv.to_h.merge({'status' => 200})
 
         rv['hostname'] = Socket.gethostname
@@ -135,13 +142,13 @@ class SimpleMirlynAPI < Sinatra::Base
 
   get '/' do
     jsonp({'valid_keys' => {
-          'id' => 'Mirlyn Record ID',
-          'issn' => "ISSN",
-          'oclc' => 'OCLC Number',
-          'isbn' => "ISBN",
-          'lccn' => "Library of Congress Call Number",
-          'htid' => "HathiTrust ID"
-         }})
+        'id'   => 'Mirlyn Record ID',
+        'issn' => "ISSN",
+        'oclc' => 'OCLC Number',
+        'isbn' => "ISBN",
+        'lccn' => "Library of Congress Call Number",
+        'htid' => "HathiTrust ID"
+    }})
   end
 
 
@@ -149,9 +156,9 @@ class SimpleMirlynAPI < Sinatra::Base
   get '/isbn/:val' do
     val = params[:val]
     unless StdNum::ISBN.at_least_trying?(val)
-      malformed!('isbn',val)
+      malformed!('isbn', val)
     else
-      bestguess = StdNum::ISBN.reduce_to_basics(val, [10,13])
+      bestguess = StdNum::ISBN.reduce_to_basics(val, [10, 13])
       kv_search('isbn', '(' + [bestguess, StdNum::ISBN.allNormalizedValues(val)].flatten.compact.uniq.join(' OR ') + ')')
     end
   end
@@ -159,14 +166,14 @@ class SimpleMirlynAPI < Sinatra::Base
   get '/issn/:val' do
     val = params[:val]
     unless StdNum::ISSN.reduce_to_basics(val, 8)
-      malformed!('issn',val)
+      malformed!('issn', val)
     else
       kv_search('issn', val)
     end
   end
 
   get '/lccn/:val' do
-    val = params[:val]
+    val        = params[:val]
     normalized = StdNum::LCCN.normalize(val)
     unless normalized
       malformed!('lccn', val)
@@ -177,14 +184,14 @@ class SimpleMirlynAPI < Sinatra::Base
 
   get '/id/:val' do
     val = params[:val]
-    n = val.gsub(/\D/, '')
-    kv_search('id',n)
+    n   = val.gsub(/\D/, '')
+    kv_search('id', n)
   end
 
   get '/oclc/:val' do
     val = params[:val]
-    n = val.gsub(/\D/, '')
-    kv_search('oclc',n)
+    n   = val.gsub(/\D/, '')
+    kv_search('oclc', n)
   end
 
   get '/htid/:val' do |htid|
