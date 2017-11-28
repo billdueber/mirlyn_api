@@ -147,7 +147,8 @@ class SimpleMirlynAPI < Sinatra::Base
         'oclc' => 'OCLC Number',
         'isbn' => "ISBN",
         'lccn' => "Library of Congress Call Number",
-        'htid' => "HathiTrust ID"
+        'htid' => "HathiTrust ID",
+        "barcode" => "UM Barcode"
     }})
   end
 
@@ -196,6 +197,10 @@ class SimpleMirlynAPI < Sinatra::Base
 
   get '/htid/:val' do |htid|
     kv_search('ht_id', htid)
+  end
+
+  get '/barcode/:val' do |barcode| 
+    kv_search('barcode', barcode)
   end
 
   # Catch all
