@@ -14,7 +14,7 @@ require 'yaml'
 class MirlynIdApi::MirlynHolding
 
   def location
-    ''
+    return '' # fix it later :-)
     colls = YAML.load_file('/www/vufind/web/mirlyn/web/conf/locColl.yaml')
     (colls[sublib] and colls[sublib]['collections'][collection]) or
         colls[sublib]['desc']
