@@ -1,5 +1,6 @@
 $:.unshift 'lib'
 
+require 'dotenv/load'
 require 'simple_mirlyn_api'
 require 'old_api_redirect'
 require 'pod'
