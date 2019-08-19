@@ -1,6 +1,8 @@
 $:.unshift 'lib'
 
-require 'dotenv/load'
+require 'ettin'
+Settings = Ettin.for(Ettin.settings_files("config", "production"))
+
 require 'simple_mirlyn_api'
 require 'old_api_redirect'
 require 'pod'
