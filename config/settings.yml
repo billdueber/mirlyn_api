@@ -1,0 +1,3 @@
+application_root: /www/mirlyn.lib/api
+solr_url: http://solr-vufind:8026/solr/biblio
+dev_solr_url: http://solr-vufind:8025/solr/biblio

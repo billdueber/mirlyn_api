@@ -54,8 +54,8 @@ class PodAPI < Sinatra::Base
 
   enable :logging
   enable :prefixed_redirects
-  set :client, MirlynIdApi::SolrClient.new(ENV['MIRLYN_SOLR_URL'])
-  set :root, ENV['MIRLYN_API_APPLICATION_ROOT']
+  set :client, MirlynIdApi::SolrClient.new(Settings.solr_url || ENV['MIRLYN_SOLR_URL'])
+  set :root, Settings.application_root || ENV['MIRLYN_API_APPLICATION_ROOT']
 
   helpers do
     def htid_search(val)

@@ -98,10 +98,10 @@ class SimpleMirlynAPI < Sinatra::Base
 
   enable :logging
   enable :prefixed_redirects
-  set :mirlyn_solr_url, ENV['MIRLYN_SOLR_URL']
-  set :mirlyn_dev_solr_url, ENV['MIRLYN_DEV_SOLR_URL']
+  set :mirlyn_solr_url, Settings.solr_url || ENV['MIRLYN_SOLR_URL']
+  set :mirlyn_dev_solr_url, Settings.dev_solr_url || ENV['MIRLYN_DEV_SOLR_URL']
   set :client, MirlynIdApi::SolrClient.new(settings.mirlyn_solr_url)
-  set :root, ENV['MIRLYN_API_APPLICATION_ROOT']
+  set :root, Settings.application_root || ENV['MIRLYN_API_APPLICATION_ROOT']
   set :default_encoding, 'utf-8'
 
 
